@@ -8,9 +8,16 @@ step "03 - Hyprland e Waybar"
 
 # hyprland-qtutils serve ai dialoghi di sistema del compositore: senza, certi
 # avvisi non vengono mostrati e finiscono solo nel log.
+#
+# libxkbregistry0 e libxkbcommon-x11-0 sembrano fuori posto qui, ma non lo sono:
+# nascono dallo stesso sorgente di libxkbcommon0, che Hyprland tira dai
+# backports, e dipendono dalla sua versione *esatta*. Lasciandoli a stable, apt
+# dovrebbe retrocedere libxkbcommon0 e si ferma: Waybar li vuole per primo,
+# kitty subito dopo.
 apt_install_backports \
     hyprland hyprpaper hyprlock hypridle hyprpolkitagent \
-    hyprland-qtutils xdg-desktop-portal-hyprland
+    hyprland-qtutils xdg-desktop-portal-hyprland \
+    libxkbregistry0 libxkbcommon-x11-0
 ok "stack Hyprland dai backports"
 
 apt_install \
