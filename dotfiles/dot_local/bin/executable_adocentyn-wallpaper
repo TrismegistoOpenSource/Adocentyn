@@ -1,10 +1,12 @@
 #!/usr/bin/env bash
 # Mette uno sfondo a caso preso dalla cartella del tema attivo.
-#   ~/.config/wallpaper/<tema>/
+#   ~/.config/adocentyn/wallpaper/<tema>/
 set -euo pipefail
 
-theme="$(cat "$HOME/.config/adocentyn/theme" 2>/dev/null || echo blu)"
-dir="$HOME/.config/wallpaper/$theme"
+ADOCENTYN_DIR="$HOME/.config/adocentyn"
+
+theme="$(cat "$ADOCENTYN_DIR/theme" 2>/dev/null || echo blu)"
+dir="$ADOCENTYN_DIR/wallpaper/$theme"
 
 mkdir -p "$dir"
 

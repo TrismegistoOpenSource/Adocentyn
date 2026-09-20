@@ -1,5 +1,5 @@
 -- themes/blu.lua - blu vivo.
--- Sfondi letti da ~/.config/wallpaper/blu
+-- Sfondi letti da ~/.config/adocentyn/wallpaper/blu
 hl.config({
     general = {
         col = {

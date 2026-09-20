@@ -9,28 +9,68 @@ Installer di un desktop **Hyprland** semplice e stabile, a partire da una
 
 ## Installazione
 
-Da una Debian netinst appena installata, **come root** (su una minimale si entra
-proprio così, e `sudo` spesso non c'è nemmeno):
+Su una netinst minima **non c'è né git né curl**: il primo comando serve a
+procurarsi git. Da fare **come root** (su una minimale si entra proprio così, e
+`sudo` spesso non è nemmeno installato):
 
 ```bash
-apt install -y curl && curl -fsSL https://raw.githubusercontent.com/TrismegistoOpenSource/Adocentyn/main/bootstrap.sh | bash
+apt update && apt install -y git
 ```
-
-Oppure a mano, se preferisci vedere il codice prima di eseguirlo:
 
 ```bash
-apt install -y git && git clone https://github.com/TrismegistoOpenSource/Adocentyn.git && ./Adocentyn/install.sh
+git clone https://github.com/TrismegistoOpenSource/Adocentyn.git /opt/adocentyn
 ```
 
-`bootstrap.sh` installa `git`, `curl` e i certificati, clona il repo in
-`/opt/adocentyn` e lancia `install.sh`. È ripetibile: se il checkout c'è già,
-lo aggiorna.
+```bash
+cd /opt/adocentyn && ./install.sh
+```
+
+Per aggiornare il progetto più avanti, senza riclonare:
+
+```bash
+git -C /opt/adocentyn pull && /opt/adocentyn/install.sh
+```
 
 L'installer capisce da solo per quale utente configurare il desktop: se c'è un
 solo utente normale usa quello, altrimenti lo si indica a mano.
 
 ```bash
 ADOCENTYN_USER=nicolo ./install.sh
+```
+
+### Se `apt install git` fallisce
+
+Vuol dire che l'installazione è stata fatta **senza mirror di rete**: il sistema
+conosce solo il CD. Lo step `01_repos` sa rimediare da solo, ma non può girare
+prima di git. In quel caso si scrivono i repository a mano, una volta sola:
+
+```bash
+cat > /etc/apt/sources.list.d/debian.sources <<'EOF'
+Types: deb
+URIs: http://deb.debian.org/debian
+Suites: trixie trixie-updates
+Components: main contrib non-free non-free-firmware
+Signed-By: /usr/share/keyrings/debian-archive-keyring.gpg
+
+Types: deb
+URIs: http://security.debian.org/debian-security
+Suites: trixie-security
+Components: main contrib non-free non-free-firmware
+Signed-By: /usr/share/keyrings/debian-archive-keyring.gpg
+EOF
+```
+
+```bash
+sed -i 's|^deb cdrom:|# deb cdrom:|' /etc/apt/sources.list; apt update && apt install -y git
+```
+
+### Scorciatoia con curl
+
+Se `curl` c'è già, `bootstrap.sh` fa da solo i tre passaggi (installa git, clona
+in `/opt/adocentyn`, lancia l'installer) e sa scrivere i repository se mancano:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/TrismegistoOpenSource/Adocentyn/main/bootstrap.sh | bash
 ```
 
 Ogni step è eseguibile da solo, utile quando si lavora su un pezzo alla volta:
@@ -90,20 +130,27 @@ errore chiaro dell'installer che uno schermo nero al riavvio.
 
 ## Temi e sfondi
 
-Due temi: **blu** (blu vivo) e **mono** (bianco e nero). Il tema attivo è un
-nome scritto in `~/.config/adocentyn/theme`; Hyprland lo legge all'avvio e
-Waybar lo prende da `current-theme.css`.
+Due temi: **blu** (blu vivo) e **mono** (bianco e nero).
 
-Gli sfondi si leggono da una cartella per tema, che l'installer crea vuote:
+Tutto ciò che appartiene ad Adocentyn sta in **una cartella sola**, senza
+spargere niente in giro per `~/.config`:
 
 ```
-~/.config/wallpaper/blu/
-~/.config/wallpaper/mono/
+~/.config/adocentyn/
+├── theme                 nome del tema attivo, una riga
+└── wallpaper/
+    ├── blu/              sfondi del tema blu
+    └── mono/             sfondi del tema bianco e nero
 ```
+
+Le uniche eccezioni sono i file che devono stare dove il programma li cerca:
+`~/.config/hypr/` per Hyprland e `~/.config/waybar/` per la barra. Quelli non
+sono spostabili, ma sono le posizioni standard: nessun programma va a cercare
+altrove.
 
 Mettici le immagini che vuoi (`jpg`, `png`, `webp`). `adocentyn-wallpaper` ne
-pesca una a caso da quella del tema attivo. Se la cartella è vuota non succede
-nulla e non compaiono errori.
+pesca una a caso dalla cartella del tema attivo. Se la cartella è vuota non
+succede nulla e non compaiono errori.
 
 ## Scorciatoie
 

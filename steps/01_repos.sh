@@ -9,7 +9,30 @@ step "01 - repository"
 SOURCES="/etc/apt/sources.list.d/debian.sources"
 BACKPORTS="/etc/apt/sources.list.d/debian-backports.sources"
 
-[ -f "$SOURCES" ] || die "$SOURCES non trovato: atteso il formato deb822 di Debian 13"
+# Un'installazione fatta senza mirror di rete non ha questo file (ha solo il
+# CD in /etc/apt/sources.list): senza, nemmeno "apt install git" funziona.
+if [ ! -f "$SOURCES" ]; then
+    cat > "$SOURCES" <<'EOF'
+Types: deb
+URIs: http://deb.debian.org/debian
+Suites: trixie trixie-updates
+Components: main contrib non-free non-free-firmware
+Signed-By: /usr/share/keyrings/debian-archive-keyring.gpg
+
+Types: deb
+URIs: http://security.debian.org/debian-security
+Suites: trixie-security
+Components: main contrib non-free non-free-firmware
+Signed-By: /usr/share/keyrings/debian-archive-keyring.gpg
+EOF
+    ok "$SOURCES creato (mancava: installazione fatta senza mirror di rete)"
+
+    # Il CD non serve più e, se non è nel lettore, fa fallire ogni apt update.
+    if [ -f /etc/apt/sources.list ] && grep -q '^deb cdrom:' /etc/apt/sources.list; then
+        sed -i 's|^deb cdrom:|# deb cdrom:|' /etc/apt/sources.list
+        ok "sorgente CD-ROM disattivata"
+    fi
+fi
 
 if grep -q 'non-free-firmware' "$SOURCES"; then
     skip "contrib/non-free/non-free-firmware già attivi"

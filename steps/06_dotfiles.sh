@@ -45,16 +45,17 @@ else
     ok "configurazioni applicate"
 fi
 
-as_user mkdir -p "$USER_HOME/.config/wallpaper/blu" "$USER_HOME/.config/wallpaper/mono"
-as_user mkdir -p "$USER_HOME/.config/adocentyn"
-if [ ! -f "$USER_HOME/.config/adocentyn/theme" ]; then
-    as_user tee "$USER_HOME/.config/adocentyn/theme" >/dev/null <<<"blu"
+# Tutto ciò che è di Adocentyn sta qui sotto, niente sparso per ~/.config.
+ADOCENTYN_CONF="$USER_HOME/.config/adocentyn"
+as_user mkdir -p "$ADOCENTYN_CONF/wallpaper/blu" "$ADOCENTYN_CONF/wallpaper/mono"
+if [ ! -f "$ADOCENTYN_CONF/theme" ]; then
+    as_user tee "$ADOCENTYN_CONF/theme" >/dev/null <<<"blu"
 fi
-ok "cartelle degli sfondi pronte (vuote: le riempi tu)"
+ok "cartelle degli sfondi pronte in $ADOCENTYN_CONF/wallpaper (vuote: le riempi tu)"
 
 # current-theme.css è generato, quindi chezmoi lo ignora: senza, il CSS della
 # barra non risolve l'import e Waybar parte senza colori.
-THEME_NAME="$(cat "$USER_HOME/.config/adocentyn/theme" 2>/dev/null || echo blu)"
+THEME_NAME="$(cat "$ADOCENTYN_CONF/theme" 2>/dev/null || echo blu)"
 as_user tee "$USER_HOME/.config/waybar/current-theme.css" >/dev/null \
     <<<"@import \"themes/${THEME_NAME}.css\";"
 ok "tema attivo: $THEME_NAME"

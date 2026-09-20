@@ -61,4 +61,4 @@ done
 
 step "Fatto"
 info "riavvia, entra come $(target_user) sulla tty1 e Hyprland parte da solo."
-info "Gli sfondi vanno in ~/.config/wallpaper/blu e ~/.config/wallpaper/mono."
+info "Gli sfondi vanno in ~/.config/adocentyn/wallpaper/blu (e /mono)."

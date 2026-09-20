@@ -1,5 +1,5 @@
 -- themes/mono.lua - bianco e nero.
--- Sfondi letti da ~/.config/wallpaper/mono
+-- Sfondi letti da ~/.config/adocentyn/wallpaper/mono
 hl.config({
     general = {
         col = {
