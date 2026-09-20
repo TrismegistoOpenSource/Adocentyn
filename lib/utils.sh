@@ -76,6 +76,58 @@ apt_install_backports() {
         -t trixie-backports "$@"
 }
 
+# Applica le configurazioni senza calpestare quelle modificate a mano.
+# chezmoi status: prima colonna 'M' = il file è cambiato dopo l'ultima scrittura
+# di chezmoi, cioè l'ha toccato l'utente. Quelli si lasciano stare e si dice
+# come riconciliarli; tutto il resto si applica.
+chezmoi_apply_sicuro() {
+    local home="$1"
+    local status conflitti=() da_applicare=() riga percorso
+
+    status="$(as_user chezmoi status 2>/dev/null || true)"
+
+    if [ -z "$status" ]; then
+        skip "configurazioni già allineate, niente da applicare"
+        return 0
+    fi
+
+    while IFS= read -r riga; do
+        [ -z "$riga" ] && continue
+        percorso="${riga:3}"
+        if [ "${riga:0:1}" = "M" ]; then
+            conflitti+=("$percorso")
+        else
+            da_applicare+=("$home/$percorso")
+        fi
+    done <<< "$status"
+
+    if [ "${#da_applicare[@]}" -gt 0 ]; then
+        as_user chezmoi apply -- "${da_applicare[@]}"
+        ok "${#da_applicare[@]} voci aggiornate"
+    fi
+
+    if [ "${#conflitti[@]}" -gt 0 ]; then
+        info ""
+        info "questi file li hai modificati a mano: li lascio intatti"
+        printf '      %s\n' "${conflitti[@]}"
+        info ""
+        info "per unire le tue modifiche con quelle nuove:  chezmoi merge <file>"
+        info "per tenere le tue e basta:                    chezmoi re-add <file>"
+        info "per buttarle e prendere quelle del repo:      chezmoi apply --force <file>"
+    fi
+}
+
+ADOCENTYN_STATE="/var/lib/adocentyn/version"
+
+installed_version() {
+    [ -f "$ADOCENTYN_STATE" ] && cat "$ADOCENTYN_STATE" || printf ''
+}
+
+mark_installed() {
+    mkdir -p "$(dirname "$ADOCENTYN_STATE")"
+    printf '%s\n' "$ADOCENTYN_VERSION" > "$ADOCENTYN_STATE"
+}
+
 check_debian_trixie() {
     [ -r /etc/os-release ] || die "/etc/os-release illeggibile: non sembra un sistema Debian"
     # shellcheck disable=SC1091

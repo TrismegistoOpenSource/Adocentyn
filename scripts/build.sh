@@ -8,8 +8,8 @@ OUT="$(cd "$SRC/.." && pwd)/build"
 rm -rf "$OUT"
 mkdir -p "$OUT"
 
-cp -R "$SRC/bootstrap.sh" "$SRC/install.sh" "$SRC/lib" "$SRC/steps" \
-      "$SRC/dotfiles" "$SRC/README.md" "$SRC/LICENSE" "$OUT/"
+cp -R "$SRC/bootstrap.sh" "$SRC/install.sh" "$SRC/lib" "$SRC/steps" "$SRC/tests" \
+      "$SRC/dotfiles" "$SRC/.chezmoiroot" "$SRC/README.md" "$SRC/LICENSE" "$OUT/"
 
 chmod +x "$OUT/bootstrap.sh" "$OUT/install.sh" "$OUT"/steps/*.sh
 chmod +x "$OUT"/dotfiles/dot_local/bin/executable_*

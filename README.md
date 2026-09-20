@@ -166,23 +166,80 @@ tema        M+SHIFT+T cambia tema · M+SHIFT+W cambia sfondo
 sistema     M+L blocca · M+SHIFT+P schermata di una zona · M+SHIFT+Q esci
 ```
 
+## Aggiornare, non reinstallare
+
+Rilanciare `install.sh` su una macchina già configurata **è** l'aggiornamento:
+si comporta come un `apt upgrade` del solo Adocentyn, senza riscaricare ciò che
+c'è già e senza toccare quello che hai personalizzato.
+
+```bash
+chezmoi update                    # da utente: git pull del repo + applica
+sudo /opt/adocentyn/install.sh    # da root: pacchetti e sistema
+```
+
+`chezmoi update` aggiorna **l'intero checkout**, quindi anche gli script di
+installazione: prima si aggiorna il repo, poi si rilancia l'installer nuovo.
+
+Cosa succede a ogni pezzo quando rilanci:
+
+| Pezzo | Comportamento |
+|---|---|
+| Repository apt | già configurati → saltati |
+| Pacchetti | `apt` installa solo ciò che manca e aggiorna ciò che è vecchio |
+| Chiave di Anthropic | già presente e verificata → non riscaricata |
+| chezmoi | già installato → saltato |
+| Configurazioni | applicate solo le differenze reali |
+| **File che hai modificato a mano** | **lasciati intatti**, con l'elenco a schermo |
+| Sfondi, tema scelto | mai toccati |
+
+Se hai modificato a mano un file gestito, l'installer non lo sovrascrive e ti
+dice come procedere:
+
+```bash
+chezmoi merge ~/.config/hypr/keybindings.lua    # unisci le tue e le nuove
+chezmoi re-add ~/.config/hypr/keybindings.lua   # tieni le tue, aggiorna il repo
+chezmoi apply --force ~/.config/hypr/keybindings.lua   # butta le tue
+```
+
+Questo comportamento è coperto da un test:
+
+```bash
+./tests/test-aggiornamento.sh
+```
+
 ## Dotfiles con chezmoi
 
 chezmoi non è nei repository Debian stable (sta solo in sid), quindi lo step 06
 installa il binario ufficiale in `/usr/local/bin`.
 
-Le configurazioni diventano un repository git in `~/.local/share/chezmoi`, con
-un primo commit già fatto. Per versionarle su GitHub:
+**La sorgente di chezmoi è questo stesso repository**: il file `.chezmoiroot`
+gli dice di guardare dentro `dotfiles/`. Non esiste una seconda copia da tenere
+allineata, e il checkout viene assegnato al tuo utente così puoi modificarlo e
+pubblicarlo.
+
+Il ciclo di lavoro è:
 
 ```bash
-chezmoi cd
-git remote add origin <url-del-tuo-repo>
-git push -u origin main
+chezmoi edit ~/.config/hypr/keybindings.lua   # modifica la sorgente nel repo
+chezmoi apply                                 # prova la modifica sul sistema
+chezmoi cd && git commit -am "..." && git push
 ```
 
-Da lì in avanti: `chezmoi edit ~/.config/hypr/keybindings.lua`, poi
-`chezmoi apply`, poi commit. Se `~/.local/share/chezmoi` esiste già, lo step 06
-**non lo tocca**: le modifiche locali non vengono mai sovrascritte.
+### Più macchine
+
+Le altre macchine prendono le modifiche con un comando solo:
+
+```bash
+chezmoi update
+```
+
+Fa `git pull` e applica, sempre rispettando i file modificati in locale su
+quella macchina. Se l'aggiornamento tocca anche gli script di installazione
+(pacchetti nuovi, step nuovi), dopo si rilancia `sudo install.sh`.
+
+> Le configurazioni sono per ora **uguali su tutte le macchine**. Quando servirà
+> differenziarle (monitor diversi, portatile contro fisso), chezmoi lo fa con i
+> template: è il passo successivo, non serve ancora.
 
 ## Avvio della sessione
 

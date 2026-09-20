@@ -37,8 +37,10 @@ esac
 require_root
 check_debian_trixie
 
+ESEGUITI_TUTTI=1
 if [ $# -gt 0 ]; then
     STEPS=("$@")
+    ESEGUITI_TUTTI=0
 fi
 
 printf '%s\n' "$C_BOLD"
@@ -51,7 +53,16 @@ cat <<'EOF'
                                       |___/
 EOF
 printf '%s' "$C_OFF"
-info "versione $ADOCENTYN_VERSION - utente: $(target_user) - home: $(target_home)"
+
+PRECEDENTE="$(installed_version)"
+if [ -z "$PRECEDENTE" ]; then
+    info "prima installazione - versione $ADOCENTYN_VERSION"
+elif [ "$PRECEDENTE" = "$ADOCENTYN_VERSION" ]; then
+    info "aggiornamento - già alla versione $ADOCENTYN_VERSION"
+else
+    info "aggiornamento - dalla versione $PRECEDENTE alla $ADOCENTYN_VERSION"
+fi
+info "utente: $(target_user) - home: $(target_home)"
 
 for s in "${STEPS[@]}"; do
     script="$ADOCENTYN_ROOT/steps/${s}.sh"
@@ -59,6 +70,16 @@ for s in "${STEPS[@]}"; do
     bash "$script"
 done
 
+# Solo dopo un giro completo: se l'utente ha eseguito un singolo step, il
+# sistema non è nello stato di quella versione e dirlo sarebbe una bugia.
+if [ "$ESEGUITI_TUTTI" = "1" ]; then
+    mark_installed
+fi
+
 step "Fatto"
-info "riavvia, entra come $(target_user) sulla tty1 e Hyprland parte da solo."
-info "Gli sfondi vanno in ~/.config/adocentyn/wallpaper/blu (e /mono)."
+if [ -z "$PRECEDENTE" ]; then
+    info "riavvia, entra come $(target_user) sulla tty1 e Hyprland parte da solo."
+    info "Gli sfondi vanno in ~/.config/adocentyn/wallpaper/blu (e /mono)."
+else
+    info "aggiornamento completato: le tue configurazioni e i tuoi sfondi non sono stati toccati."
+fi
