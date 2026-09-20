@@ -17,33 +17,13 @@ fi
 
 printf '\n==> Adocentyn - preparazione\n'
 
-# Prima di poter installare git servono dei repository funzionanti. Se
-# l'installazione è stata fatta senza mirror di rete non ce ne sono, e apt
-# fallisce: in quel caso li scriviamo qui, perché senza git non possiamo
-# nemmeno scaricare lo step 01 che farebbe la stessa cosa fatta meglio.
-if ! apt-get update 2>/dev/null || ! apt-cache show git >/dev/null 2>&1; then
-    printf '==> nessun repository di rete configurato, lo aggiungo\n'
-    cat > /etc/apt/sources.list.d/debian.sources <<'EOF'
-Types: deb
-URIs: http://deb.debian.org/debian
-Suites: trixie trixie-updates
-Components: main contrib non-free non-free-firmware
-Signed-By: /usr/share/keyrings/debian-archive-keyring.gpg
-
-Types: deb
-URIs: http://security.debian.org/debian-security
-Suites: trixie-security
-Components: main contrib non-free non-free-firmware
-Signed-By: /usr/share/keyrings/debian-archive-keyring.gpg
-EOF
-    if [ -f /etc/apt/sources.list ] && grep -q '^deb cdrom:' /etc/apt/sources.list; then
-        sed -i 's|^deb cdrom:|# deb cdrom:|' /etc/apt/sources.list
-    fi
-    DEBIAN_FRONTEND=noninteractive apt-get update
+if ! DEBIAN_FRONTEND=noninteractive apt-get update ||
+   ! DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends git ca-certificates; then
+    printf 'ERRORE: apt non riesce a installare git.\n' >&2
+    printf 'Probabilmente il sistema non ha repository di rete: vedi la sezione\n' >&2
+    printf '"Se apt install git fallisce" nel README del progetto.\n' >&2
+    exit 1
 fi
-
-DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-    git ca-certificates
 
 if [ -d "$CHECKOUT/.git" ]; then
     printf '==> aggiorno il checkout esistente in %s\n' "$CHECKOUT"

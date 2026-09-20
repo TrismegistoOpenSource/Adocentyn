@@ -37,13 +37,10 @@ esac
 require_root
 check_debian_trixie
 
-ESEGUITI_TUTTI=1
 if [ $# -gt 0 ]; then
     STEPS=("$@")
-    ESEGUITI_TUTTI=0
 fi
 
-printf '%s\n' "$C_BOLD"
 cat <<'EOF'
    _       _                     _
   /_\   __| | ___   ___ ___ _ __| |_ _   _ _ __
@@ -52,7 +49,6 @@ cat <<'EOF'
 \_/ \_/\__,_|\___/ \___\___|_| |_|\__|\__, |_| |_|
                                       |___/
 EOF
-printf '%s' "$C_OFF"
 
 PRECEDENTE="$(installed_version)"
 if [ -z "$PRECEDENTE" ]; then
@@ -70,9 +66,9 @@ for s in "${STEPS[@]}"; do
     bash "$script"
 done
 
-# Solo dopo un giro completo: se l'utente ha eseguito un singolo step, il
-# sistema non è nello stato di quella versione e dirlo sarebbe una bugia.
-if [ "$ESEGUITI_TUTTI" = "1" ]; then
+# Solo dopo un giro completo: se è stato eseguito un singolo step, il sistema
+# non è nello stato di quella versione e dirlo sarebbe una bugia.
+if [ $# -eq 0 ]; then
     mark_installed
 fi
 

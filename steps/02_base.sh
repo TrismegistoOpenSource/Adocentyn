@@ -15,6 +15,8 @@ apt_install \
 
 ok "audio, rete, permessi, dischi e font"
 
-systemctl enable NetworkManager.service >/dev/null 2>&1 || true
-as_user systemctl --user enable pipewire.service wireplumber.service >/dev/null 2>&1 || true
-ok "servizi abilitati"
+# PipeWire non si tocca: i suoi servizi utente sono già attivi di default e si
+# avviano al primo login. Da root, senza una sessione utente, "systemctl --user"
+# fallirebbe comunque.
+systemctl enable --now NetworkManager.service >/dev/null
+ok "NetworkManager attivo"

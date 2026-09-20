@@ -3,8 +3,13 @@
 
 ADOCENTYN_VERSION="0.1.0"
 
-C_CYAN=$'\033[0;36m'; C_GREEN=$'\033[0;32m'; C_YELLOW=$'\033[0;33m'
-C_RED=$'\033[0;31m';  C_BOLD=$'\033[1m';     C_OFF=$'\033[0m'
+# Colori solo a terminale: rediretto su file resterebbero codici illeggibili.
+if [ -t 1 ]; then
+    C_CYAN=$'\033[0;36m'; C_GREEN=$'\033[0;32m'; C_YELLOW=$'\033[0;33m'
+    C_RED=$'\033[0;31m';  C_BOLD=$'\033[1m';     C_OFF=$'\033[0m'
+else
+    C_CYAN=''; C_GREEN=''; C_YELLOW=''; C_RED=''; C_BOLD=''; C_OFF=''
+fi
 
 step() { printf '\n%s==> %s%s\n' "$C_BOLD$C_CYAN" "$*" "$C_OFF"; }
 info() { printf '    %s\n' "$*"; }
@@ -15,14 +20,18 @@ err()  { printf '%sERRORE:%s %s\n' "$C_RED" "$C_OFF" "$*" >&2; }
 die() { err "$*"; exit 1; }
 
 require_root() {
-    [ "$(id -u)" -eq 0 ] || die "serve root: rilancia con sudo"
+    [ "$(id -u)" -eq 0 ] || die "serve root: accedi come root oppure usa sudo"
 }
 
-# L'utente vero dietro al sudo. Gli step che toccano la home devono usare
-# questo, non root, o i file finiscono in /root con i permessi sbagliati.
-# Su una netinst appena installata si entra come root e sudo può non esserci
-# affatto: in quel caso si cerca l'unico utente normale del sistema.
-target_user() {
+# L'utente vero per cui si configura il desktop. Gli step che toccano la home
+# devono usare questo, non root, o i file finiscono in /root con i permessi
+# sbagliati. Su una netinst appena installata si entra come root e sudo può non
+# esserci affatto: in quel caso si cerca l'unico utente normale del sistema.
+# Calcolato una volta sola: serve a ogni as_user.
+ADOCENTYN_UTENTE=""
+ADOCENTYN_HOME=""
+
+_rileva_utente() {
     if [ -n "${ADOCENTYN_USER:-}" ]; then
         id -u "$ADOCENTYN_USER" >/dev/null 2>&1 || die "l'utente '$ADOCENTYN_USER' non esiste"
         printf '%s' "$ADOCENTYN_USER"
@@ -34,27 +43,26 @@ target_user() {
         return
     fi
 
-    local candidates
-    candidates="$(awk -F: '$3 >= 1000 && $3 < 60000 && $7 !~ /(nologin|false)$/ { print $1 }' /etc/passwd)"
-    local count
-    count="$(printf '%s\n' "$candidates" | grep -c . || true)"
+    local utenti
+    utenti="$(awk -F: '$3 >= 1000 && $3 < 60000 && $7 !~ /(nologin|false)$/ { print $1 }' /etc/passwd)"
 
-    if [ "$count" -eq 1 ]; then
-        printf '%s' "$candidates"
-        return
-    fi
+    case "$(printf '%s' "$utenti" | grep -c .)" in
+        1) printf '%s' "$utenti" ;;
+        0) die "nessun utente normale sul sistema: creane uno (adduser <nome>) e rilancia" ;;
+        *) err "più utenti possibili:"
+           printf '%s\n' "$utenti" | sed 's/^/      /' >&2
+           die "scegli tu:  ADOCENTYN_USER=<nome> ./install.sh" ;;
+    esac
+}
 
-    if [ "$count" -eq 0 ]; then
-        die "nessun utente normale sul sistema: creane uno (adduser <nome>) e rilancia"
-    fi
-
-    err "più utenti possibili:"
-    printf '%s\n' "$candidates" | sed 's/^/      /' >&2
-    die "scegli tu:  ADOCENTYN_USER=<nome> ./install.sh"
+target_user() {
+    [ -n "$ADOCENTYN_UTENTE" ] || ADOCENTYN_UTENTE="$(_rileva_utente)"
+    printf '%s' "$ADOCENTYN_UTENTE"
 }
 
 target_home() {
-    getent passwd "$(target_user)" | cut -d: -f6
+    [ -n "$ADOCENTYN_HOME" ] || ADOCENTYN_HOME="$(getent passwd "$(target_user)" | cut -d: -f6)"
+    printf '%s' "$ADOCENTYN_HOME"
 }
 
 # runuser e non sudo: su una netinst minima sudo può non essere installato.

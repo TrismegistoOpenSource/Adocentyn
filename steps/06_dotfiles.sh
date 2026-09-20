@@ -36,20 +36,18 @@ if [ "$(stat -c '%U' "$ADOCENTYN_ROOT")" != "$USER_NAME" ]; then
     ok "$ADOCENTYN_ROOT assegnato a $USER_NAME"
 fi
 
-if [ -f "$CHEZMOI_CONF" ]; then
-    # File di configurazione dell'utente: non si sovrascrive, si controlla.
-    if grep -q "sourceDir" "$CHEZMOI_CONF" && ! grep -qF "$ADOCENTYN_ROOT" "$CHEZMOI_CONF"; then
-        info "$CHEZMOI_CONF punta a un'altra sorgente: lo lascio com'è"
-        info "se vuoi usare questo checkout:  sourceDir = \"$ADOCENTYN_ROOT\""
-    else
-        skip "configurazione di chezmoi già a posto"
-    fi
-else
+if [ ! -f "$CHEZMOI_CONF" ]; then
     as_user mkdir -p "$CHEZMOI_CONF_DIR"
     as_user tee "$CHEZMOI_CONF" >/dev/null <<EOF
 sourceDir = "$ADOCENTYN_ROOT"
 EOF
     ok "chezmoi punta a $ADOCENTYN_ROOT"
+elif grep -qF "$ADOCENTYN_ROOT" "$CHEZMOI_CONF"; then
+    skip "chezmoi punta già a questo checkout"
+else
+    # File di configurazione dell'utente: si segnala, non si sovrascrive.
+    info "$CHEZMOI_CONF punta altrove: lo lascio com'è"
+    info "per usare questo checkout:  sourceDir = \"$ADOCENTYN_ROOT\""
 fi
 
 # Tutto ciò che è di Adocentyn sta qui sotto, niente sparso per ~/.config.

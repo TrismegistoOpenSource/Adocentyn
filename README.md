@@ -262,5 +262,6 @@ avvisi di aggiornamento e donazione (`ecosystem.no_update_news`,
 sourcecode/scripts/build.sh
 ```
 
-Prepara in `build/` il pacchetto pronto all'uso: gli script, i dotfiles e il
-`bootstrap.sh`.
+Crea `build/adocentyn-<versione>.tar.gz` da quanto è committato in `HEAD`.
+Serve per distribuire una versione; per l'uso normale si clona il repository,
+perché `chezmoi update` ha bisogno che la sorgente sia un checkout git.

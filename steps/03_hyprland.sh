@@ -19,12 +19,9 @@ apt_install \
     xdg-desktop-portal xdg-desktop-portal-gtk
 ok "barra, launcher, terminale, notifiche e utilità"
 
-installed="$(dpkg-query -W -f='${Version}' hyprland 2>/dev/null || true)"
-[ -n "$installed" ] || die "hyprland non risulta installato"
-info "hyprland $installed"
-
 # La config Lua esiste solo dalla 0.55: se un domani i backports regredissero,
 # meglio accorgersene qui che davanti a uno schermo nero.
 [ -f /usr/share/hypr/stubs/hl.meta.lua ] || \
     die "questa build di hyprland non espone l'API Lua: la configurazione di Adocentyn non funzionerebbe"
-ok "API Lua presente"
+
+ok "hyprland $(dpkg-query -W -f='${Version}' hyprland), con API Lua"
