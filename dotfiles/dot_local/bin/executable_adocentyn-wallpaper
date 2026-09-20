@@ -1,13 +1,20 @@
 #!/usr/bin/env bash
-# Mette uno sfondo a caso preso dalla cartella del tema attivo.
-#   ~/.config/adocentyn/wallpaper/<tema>/
+# Mette lo sfondo del tema attivo, preso da ~/.config/adocentyn/wallpaper/<tema>/.
+#
+#   adocentyn-wallpaper            quello predefinito del tema
+#   adocentyn-wallpaper --random   uno a caso della cartella
 set -euo pipefail
 
 ADOCENTYN_DIR="$HOME/.config/adocentyn"
+DEFAULTS="$ADOCENTYN_DIR/wallpaper-default.conf"
+
+a_caso=0
+case "${1:-}" in
+    --random|-r) a_caso=1 ;;
+esac
 
 theme="$(cat "$ADOCENTYN_DIR/theme" 2>/dev/null || echo blu)"
 dir="$ADOCENTYN_DIR/wallpaper/$theme"
-
 mkdir -p "$dir"
 
 papers=()
@@ -22,7 +29,26 @@ if [ "${#papers[@]}" -eq 0 ]; then
     exit 0
 fi
 
-pick="${papers[RANDOM % ${#papers[@]}]}"
+pick=""
+if [ "$a_caso" -eq 0 ] && [ -f "$DEFAULTS" ]; then
+    nome="$(sed -n "s/^${theme}=//p" "$DEFAULTS" | head -1)"
+    if [ -n "$nome" ]; then
+        if [ -f "$dir/$nome" ]; then
+            pick="$dir/$nome"
+        else
+            # Nome senza estensione: la si cerca fra quelle note, così
+            # riconvertire le immagini non obbliga a toccare la configurazione.
+            for ext in jpg jpeg png webp JPG JPEG PNG WEBP; do
+                if [ -f "$dir/$nome.$ext" ]; then
+                    pick="$dir/$nome.$ext"
+                    break
+                fi
+            done
+        fi
+    fi
+fi
+# Un nome scritto male nel file non deve lasciare lo schermo vuoto.
+[ -n "$pick" ] || pick="${papers[RANDOM % ${#papers[@]}]}"
 
 # All'avvio questo script e hyprpaper partono insieme: se il demone non ha
 # ancora aperto la sua IPC il comando fallisce. Si riprova per qualche secondo.
@@ -40,4 +66,4 @@ if ! hyprctl hyprpaper preload "$pick" >/dev/null 2>&1 \
     exit 1
 fi
 
-printf 'sfondo: %s\n' "$pick"
+printf 'sfondo: %s\n' "${pick##*/}"

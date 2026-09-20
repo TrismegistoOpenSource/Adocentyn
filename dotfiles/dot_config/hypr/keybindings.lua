@@ -39,7 +39,7 @@ hl.bind(M .. " + SHIFT + S",  hl.dsp.window.move({ workspace = "special:magic" }
 
 -- Tema e sfondo
 hl.bind(M .. " + SHIFT + T", hl.dsp.exec_cmd("adocentyn-theme"))
-hl.bind(M .. " + SHIFT + W", hl.dsp.exec_cmd("adocentyn-wallpaper"))
+hl.bind(M .. " + SHIFT + W", hl.dsp.exec_cmd("adocentyn-wallpaper --random"))
 
 -- Schermate e blocco
 hl.bind(M .. " + SHIFT + P", hl.dsp.exec_cmd("grim -g \"$(slurp)\" - | wl-copy"))

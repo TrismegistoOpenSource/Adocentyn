@@ -4,8 +4,8 @@ Installer di un desktop **Hyprland** semplice e stabile, a partire da una
 **Debian 13 (Trixie)** netinst minima già installata.
 
 > **Versione 0.1.0** — prima base funzionante: Hyprland con configurazione in
-> **Lua**, Waybar, due temi, gestione degli sfondi per tema, le poche
-> applicazioni indispensabili, Claude Code e i dotfiles versionati con chezmoi.
+> **Lua**, Waybar, tre temi con i propri sfondi, le poche applicazioni
+> indispensabili, Claude Code e i dotfiles versionati con chezmoi.
 
 ## Installazione
 
@@ -76,7 +76,7 @@ curl -fsSL https://raw.githubusercontent.com/TrismegistoOpenSource/Adocentyn/mai
 Ogni step è eseguibile da solo, utile quando si lavora su un pezzo alla volta:
 
 ```bash
-sudo ./install.sh 03_hyprland
+./install.sh 03_hyprland
 ```
 
 ## Perché Debian e non Fedora
@@ -152,6 +152,10 @@ spargere niente in giro per `~/.config`:
     └── white/
 ```
 
+Le uniche eccezioni sono i file che devono stare dove il programma li cerca:
+`~/.config/hypr/` per Hyprland e `~/.config/waybar/` per la barra. Quelli non
+sono spostabili, ma sono le posizioni standard.
+
 ### Dove mettere gli sfondi
 
 Due posti, a seconda di cosa vuoi:
@@ -167,14 +171,35 @@ Formati riconosciuti: `jpg`, `jpeg`, `png`, `webp`. Le immagini sono file
 binari: se ne metti molte e pesanti nel repository, il repository cresce in
 proporzione e ogni macchina se le scarica tutte.
 
-Le uniche eccezioni sono i file che devono stare dove il programma li cerca:
-`~/.config/hypr/` per Hyprland e `~/.config/waybar/` per la barra. Quelli non
-sono spostabili, ma sono le posizioni standard: nessun programma va a cercare
-altrove.
+### Sfondo predefinito di ogni tema
 
-Mettici le immagini che vuoi (`jpg`, `png`, `webp`). `adocentyn-wallpaper` ne
-pesca una a caso dalla cartella del tema attivo. Se la cartella è vuota non
-succede nulla e non compaiono errori.
+`~/.config/adocentyn/wallpaper-default.conf` dice quale sfondo mettere quando si
+entra in un tema:
+
+```
+blu=astronaut2
+dark=black-and-white-2560x1440-21293
+white=boa-hancock
+```
+
+**L'estensione si può omettere**: viene cercata fra `jpg`, `jpeg`, `png` e
+`webp`. Così riconvertire le immagini in un altro formato non richiede di
+rimettere mano a questo file.
+
+Se la riga manca, o il file non si trova, si ripiega su uno a caso della
+cartella: un nome scritto male non lascia mai lo schermo vuoto.
+
+I nomi dei file seguono la convenzione del progetto — **solo minuscole, numeri
+e trattini** — perché spazi e caratteri speciali rompono gli script. In
+particolare una virgola nel nome romperebbe il comando che passa lo sfondo a
+hyprpaper, dove la virgola separa il monitor dal percorso.
+
+| Comando | Cosa fa |
+|---|---|
+| `adocentyn-wallpaper` | mette il predefinito del tema attivo (all'avvio e al cambio tema) |
+| `adocentyn-wallpaper --random` | ne pesca uno a caso (`SUPER+SHIFT+W`) |
+
+Se la cartella del tema è vuota non succede nulla e non compaiono errori.
 
 ## Scorciatoie
 
