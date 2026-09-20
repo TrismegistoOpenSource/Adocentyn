@@ -75,7 +75,7 @@ fi
 step "Fatto"
 if [ -z "$PRECEDENTE" ]; then
     info "riavvia, entra come $(target_user) sulla tty1 e Hyprland parte da solo."
-    info "Gli sfondi vanno in ~/.config/adocentyn/wallpaper/blu (e /mono)."
+    info "Gli sfondi vanno in ~/.config/adocentyn/wallpaper/{blu,dark,white}."
 else
     info "aggiornamento completato: le tue configurazioni e i tuoi sfondi non sono stati toccati."
 fi

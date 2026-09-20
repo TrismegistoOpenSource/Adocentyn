@@ -1,4 +1,4 @@
--- themes/blu.lua - blu vivo.
+-- themes/blu.lua - scuro con tonalità blu.
 -- Sfondi letti da ~/.config/adocentyn/wallpaper/blu
 hl.config({
     general = {

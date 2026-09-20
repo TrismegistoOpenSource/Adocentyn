@@ -68,11 +68,21 @@ verifica "il conflitto è stato segnalato" \
 titolo "5) i dati dell'utente non vengono mai toccati"
 mkdir -p "$HOME_TEST/.config/adocentyn/wallpaper/blu"
 printf 'la mia foto' > "$HOME_TEST/.config/adocentyn/wallpaper/blu/mio-sfondo.jpg"
-printf 'mono\n' > "$HOME_TEST/.config/adocentyn/theme"
+printf 'dark\n' > "$HOME_TEST/.config/adocentyn/theme"
 chezmoi_apply_sicuro "$HOME_TEST" >/dev/null 2>&1
 verifica "sfondo dell'utente intatto" \
     "$(cat "$HOME_TEST/.config/adocentyn/wallpaper/blu/mio-sfondo.jpg")" "la mia foto"
-verifica "scelta del tema intatta" "$(cat "$HOME_TEST/.config/adocentyn/theme")" "mono"
+verifica "scelta del tema intatta" "$(cat "$HOME_TEST/.config/adocentyn/theme")" "dark"
+
+titolo "6) uno sfondo messo nel repository arriva sulla macchina"
+printf 'finta immagine' > "$REPO/dotfiles/dot_config/adocentyn/wallpaper/dark/nuovo.png"
+chezmoi_apply_sicuro "$HOME_TEST" | sed 's/^/   /'
+verifica "lo sfondo del repo e' arrivato" \
+    "$([ -f "$HOME_TEST/.config/adocentyn/wallpaper/dark/nuovo.png" ] && echo si || echo no)" "si"
+verifica ".gitkeep NON viene copiato" \
+    "$([ -f "$HOME_TEST/.config/adocentyn/wallpaper/dark/.gitkeep" ] && echo si || echo no)" "no"
+verifica "lo sfondo locale dell'utente e' ancora li'" \
+    "$(cat "$HOME_TEST/.config/adocentyn/wallpaper/blu/mio-sfondo.jpg" 2>/dev/null)" "la mia foto"
 
 printf '\n'
 [ "$ESITO" = 0 ] && printf '\033[0;32mTUTTI I TEST PASSATI\033[0m\n' || printf '\033[0;31mCI SONO FALLIMENTI\033[0m\n'

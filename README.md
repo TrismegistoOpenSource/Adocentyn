@@ -133,9 +133,9 @@ Tre temi:
 
 | Tema | Aspetto |
 |---|---|
-| `blu` | blu vivo su fondo scuro |
-| `mono` | bianco e nero su fondo scuro |
-| `white` | chiaro, testo scuro su fondo bianco |
+| `dark` | scuro neutro |
+| `blu` | scuro con tonalità blu |
+| `white` | chiaro |
 
 `SUPER+SHIFT+T` passa al successivo, in tondo. Per andare diretto a uno:
 `adocentyn-theme white`.
@@ -147,10 +147,25 @@ spargere niente in giro per `~/.config`:
 ~/.config/adocentyn/
 ├── theme                 nome del tema attivo, una riga
 └── wallpaper/
-    ├── blu/              sfondi del tema blu
-    ├── mono/             sfondi del tema bianco e nero
-    └── white/            sfondi del tema chiaro
+    ├── blu/
+    ├── dark/
+    └── white/
 ```
+
+### Dove mettere gli sfondi
+
+Due posti, a seconda di cosa vuoi:
+
+**Nel repository**, in `dotfiles/dot_config/adocentyn/wallpaper/<tema>/`: così
+sono versionati e `chezmoi update` li porta su tutte le tue macchine. È il posto
+giusto per gli sfondi che vuoi ritrovare ovunque.
+
+**Direttamente in `~/.config/adocentyn/wallpaper/<tema>/`** sulla macchina: chezmoi
+non li tocca e non li cancella, restano locali a quel computer.
+
+Formati riconosciuti: `jpg`, `jpeg`, `png`, `webp`. Le immagini sono file
+binari: se ne metti molte e pesanti nel repository, il repository cresce in
+proporzione e ogni macchina se le scarica tutte.
 
 Le uniche eccezioni sono i file che devono stare dove il programma li cerca:
 `~/.config/hypr/` per Hyprland e `~/.config/waybar/` per la barra. Quelli non

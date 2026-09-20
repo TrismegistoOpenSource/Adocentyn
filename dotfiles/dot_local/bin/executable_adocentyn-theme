@@ -2,7 +2,7 @@
 # Cambia il tema attivo. Senza argomenti passa al successivo, in tondo.
 set -euo pipefail
 
-THEMES=(blu mono white)
+THEMES=(blu dark white)
 STATE="$HOME/.config/adocentyn/theme"
 WAYBAR_DIR="$HOME/.config/waybar"
 

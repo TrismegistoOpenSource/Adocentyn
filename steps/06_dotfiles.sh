@@ -54,7 +54,7 @@ fi
 ADOCENTYN_CONF="$USER_HOME/.config/adocentyn"
 as_user mkdir -p \
     "$ADOCENTYN_CONF/wallpaper/blu" \
-    "$ADOCENTYN_CONF/wallpaper/mono" \
+    "$ADOCENTYN_CONF/wallpaper/dark" \
     "$ADOCENTYN_CONF/wallpaper/white"
 if [ ! -f "$ADOCENTYN_CONF/theme" ]; then
     as_user tee "$ADOCENTYN_CONF/theme" >/dev/null <<<"blu"

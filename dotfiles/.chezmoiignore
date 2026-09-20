@@ -1,2 +1,5 @@
 # Riscritto da adocentyn-theme a ogni cambio tema: è stato, non configurazione.
 .config/waybar/current-theme.css
+
+# Serve solo a far esistere in git le cartelle degli sfondi vuote.
+.gitkeep
