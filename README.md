@@ -296,6 +296,12 @@ Nessun display manager: si entra sulla console, e su **tty1** parte Hyprland da
 solo (`~/.bash_profile`). Sulle altre console resta la shell, che è la via di
 fuga quando il desktop non parte.
 
+L'avvio passa da **`start-hyprland`**, non dal binario `Hyprland`: è il
+lanciatore ufficiale, sorveglia il compositore con un watchdog e interviene se
+si blocca. Lanciando `Hyprland` a mano si vede l'avviso *«Hyprland is being
+launched without start-hyprland. This is highly advised against.»* — quindi
+anche per una prova al volo conviene usare `start-hyprland`.
+
 ## Sulla fascia di avvisi di Hyprland
 
 La striscia che Hyprland mostra in alto appena installato è l'avviso di

@@ -10,6 +10,14 @@ export PATH
 
 # Hyprland parte da solo entrando sulla prima console, e solo lì: sulle altre
 # resta la shell, utile quando il desktop non parte e bisogna ripararlo.
+#
+# start-hyprland e non Hyprland: è il lanciatore ufficiale, sorveglia il
+# compositore con un watchdog e interviene se si blocca. Lanciare il binario
+# diretto stampa "this is highly advised against" e rinuncia a quella rete.
 if [ -z "${WAYLAND_DISPLAY:-}" ] && [ "${XDG_VTNR:-}" = "1" ]; then
-    exec Hyprland
+    if command -v start-hyprland >/dev/null 2>&1; then
+        exec start-hyprland
+    else
+        exec Hyprland
+    fi
 fi
