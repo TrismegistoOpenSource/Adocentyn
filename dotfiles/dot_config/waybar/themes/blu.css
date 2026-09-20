@@ -1,0 +1,6 @@
+/* tema blu vivo */
+@define-color bg      rgba(10, 18, 28, 0.92);
+@define-color bg-alt  rgba(22, 40, 60, 0.92);
+@define-color fg      #eaf4ff;
+@define-color fg-dim  #7ea8cc;
+@define-color accent  #1e88ff;

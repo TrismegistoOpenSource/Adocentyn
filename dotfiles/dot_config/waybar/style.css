@@ -1,0 +1,61 @@
+/* style.css - forma della barra. I colori arrivano dal tema.
+ * current-theme.css lo riscrive adocentyn-theme: non va modificato a mano
+ * (è ignorato da chezmoi). */
+@import "current-theme.css";
+
+* {
+    font-family: "JetBrains Mono", "Font Awesome 6 Free", monospace;
+    font-size: 13px;
+    border: none;
+    border-radius: 0;
+    min-height: 0;
+}
+
+window#waybar {
+    background: @bg;
+    color: @fg;
+}
+
+#workspaces button {
+    padding: 0 10px;
+    color: @fg-dim;
+    background: transparent;
+}
+
+#workspaces button.active {
+    color: @accent;
+    box-shadow: inset 0 -2px @accent;
+}
+
+#workspaces button:hover {
+    background: @bg-alt;
+    color: @fg;
+}
+
+#window {
+    color: @fg-dim;
+    padding: 0 10px;
+}
+
+#clock {
+    color: @fg;
+    font-weight: bold;
+    padding: 0 12px;
+}
+
+#pulseaudio,
+#network,
+#cpu,
+#memory,
+#battery {
+    padding: 0 10px;
+    color: @fg;
+    background: @bg-alt;
+    margin: 4px 0;
+    border-radius: 6px;
+}
+
+#battery.warning  { color: #e0a030; }
+#battery.critical { color: #e04040; }
+
+#tray { padding: 0 8px; }

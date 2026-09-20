@@ -1,0 +1,37 @@
+#!/usr/bin/env bash
+# Cambia il tema attivo. Senza argomenti alterna fra blu e mono.
+set -euo pipefail
+
+THEMES=(blu mono)
+STATE="$HOME/.config/adocentyn/theme"
+WAYBAR_DIR="$HOME/.config/waybar"
+
+mkdir -p "$(dirname "$STATE")"
+current="$(cat "$STATE" 2>/dev/null || echo blu)"
+
+if [ $# -gt 0 ]; then
+    wanted="$1"
+else
+    case "$current" in
+        blu) wanted="mono" ;;
+        *)   wanted="blu"  ;;
+    esac
+fi
+
+valid=0
+for t in "${THEMES[@]}"; do [ "$t" = "$wanted" ] && valid=1; done
+if [ "$valid" -ne 1 ]; then
+    printf 'temi disponibili: %s\n' "${THEMES[*]}" >&2
+    exit 1
+fi
+
+printf '%s\n' "$wanted" > "$STATE"
+
+# Il CSS non sa fare import dinamici: si riscrive un file che importa il tema.
+printf '@import "themes/%s.css";\n' "$wanted" > "$WAYBAR_DIR/current-theme.css"
+
+hyprctl reload >/dev/null 2>&1 || true
+pkill -USR2 waybar >/dev/null 2>&1 || true
+adocentyn-wallpaper >/dev/null 2>&1 || true
+
+printf 'tema: %s\n' "$wanted"

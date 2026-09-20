@@ -1,0 +1,41 @@
+#!/usr/bin/env bash
+# Mette uno sfondo a caso preso dalla cartella del tema attivo.
+#   ~/.config/wallpaper/<tema>/
+set -euo pipefail
+
+theme="$(cat "$HOME/.config/adocentyn/theme" 2>/dev/null || echo blu)"
+dir="$HOME/.config/wallpaper/$theme"
+
+mkdir -p "$dir"
+
+papers=()
+while IFS= read -r p; do
+    papers+=("$p")
+done < <(find "$dir" -maxdepth 1 -type f \
+    \( -iname '*.jpg' -o -iname '*.jpeg' -o -iname '*.png' -o -iname '*.webp' \) | sort)
+
+# Cartella vuota al primo avvio: sfondo pieno e nessun errore.
+if [ "${#papers[@]}" -eq 0 ]; then
+    printf 'nessuno sfondo in %s\n' "$dir" >&2
+    exit 0
+fi
+
+pick="${papers[RANDOM % ${#papers[@]}]}"
+
+# All'avvio questo script e hyprpaper partono insieme: se il demone non ha
+# ancora aperto la sua IPC il comando fallisce. Si riprova per qualche secondo.
+for _ in $(seq 1 20); do
+    if hyprctl hyprpaper listloaded >/dev/null 2>&1; then
+        break
+    fi
+    sleep 0.25
+done
+
+hyprctl hyprpaper unload all >/dev/null 2>&1 || true
+if ! hyprctl hyprpaper preload "$pick" >/dev/null 2>&1 \
+   || ! hyprctl hyprpaper wallpaper ",$pick" >/dev/null 2>&1; then
+    printf 'hyprpaper non risponde: sfondo non applicato\n' >&2
+    exit 1
+fi
+
+printf 'sfondo: %s\n' "$pick"

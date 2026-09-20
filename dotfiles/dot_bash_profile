@@ -1,0 +1,15 @@
+# ~/.bash_profile
+
+[ -f "$HOME/.bashrc" ] && . "$HOME/.bashrc"
+
+case ":$PATH:" in
+    *":$HOME/.local/bin:"*) ;;
+    *) PATH="$HOME/.local/bin:$PATH" ;;
+esac
+export PATH
+
+# Hyprland parte da solo entrando sulla prima console, e solo lì: sulle altre
+# resta la shell, utile quando il desktop non parte e bisogna ripararlo.
+if [ -z "${WAYLAND_DISPLAY:-}" ] && [ "${XDG_VTNR:-}" = "1" ]; then
+    exec Hyprland
+fi
