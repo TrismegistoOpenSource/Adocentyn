@@ -100,7 +100,7 @@ accetta la **configurazione in Lua**, che è quella che questo progetto usa.
 | `02_base` | PipeWire, NetworkManager, polkit, udisks, gvfs, font |
 | `03_hyprland` | Hyprland, hyprpaper, hyprlock, hypridle, hyprpolkitagent, portal; Waybar, wofi, kitty, dunst, grim/slurp |
 | `04_apps` | Nemo, GNOME Dischi, Pluma |
-| `05_claude_code` | repository apt firmato di Anthropic, con verifica dell'impronta della chiave |
+| `05_claude_code` | Claude Code con l'installer ufficiale, in `~/.local/bin` del tuo utente |
 | `06_dotfiles` | chezmoi + applicazione delle configurazioni |
 
 I pacchetti dei backports si installano con `-t trixie-backports`: senza quel
@@ -186,7 +186,7 @@ Cosa succede a ogni pezzo quando rilanci:
 |---|---|
 | Repository apt | già configurati → saltati |
 | Pacchetti | `apt` installa solo ciò che manca e aggiorna ciò che è vecchio |
-| Chiave di Anthropic | già presente e verificata → non riscaricata |
+| Claude Code | già presente → saltato (si aggiorna da solo) |
 | chezmoi | già installato → saltato |
 | Configurazioni | applicate solo le differenze reali |
 | **File che hai modificato a mano** | **lasciati intatti**, con l'elenco a schermo |
