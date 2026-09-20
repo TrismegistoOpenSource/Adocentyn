@@ -8,6 +8,9 @@ step "04 - applicazioni"
 
 # xed è dei repo Mint, Debian non lo pacchettizza: pluma è lo stesso fork di
 # gedit da cui xed nasce, stessi menù e stesso peso.
-apt_install nemo gnome-disk-utility pluma
+#
+# Il browser è firefox-esr: Debian in main pacchettizza solo quello, non il
+# canale rapido. È lo stesso Firefox, su rilasci più lunghi.
+apt_install nemo gnome-disk-utility pluma firefox-esr
 
-ok "nemo, gnome-disk-utility, pluma"
+ok "nemo, gnome-disk-utility, pluma, firefox-esr"

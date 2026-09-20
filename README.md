@@ -99,7 +99,7 @@ accetta la **configurazione in Lua**, che è quella che questo progetto usa.
 | `01_repos` | componenti `contrib`/`non-free`/`non-free-firmware` + repository `trixie-backports` |
 | `02_base` | PipeWire, NetworkManager, polkit, udisks, gvfs, font |
 | `03_hyprland` | Hyprland, hyprpaper, hyprlock, hypridle, hyprpolkitagent, portal; Waybar, wofi, kitty, dunst, grim/slurp |
-| `04_apps` | Nemo, GNOME Dischi, Pluma |
+| `04_apps` | Nemo, GNOME Dischi, Pluma, Firefox ESR |
 | `05_claude_code` | Claude Code con l'installer ufficiale, in `~/.local/bin` del tuo utente |
 | `06_dotfiles` | chezmoi + applicazione delle configurazioni |
 
