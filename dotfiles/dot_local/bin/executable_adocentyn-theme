@@ -1,21 +1,25 @@
 #!/usr/bin/env bash
-# Cambia il tema attivo. Senza argomenti alterna fra blu e mono.
+# Cambia il tema attivo. Senza argomenti passa al successivo, in tondo.
 set -euo pipefail
 
-THEMES=(blu mono)
+THEMES=(blu mono white)
 STATE="$HOME/.config/adocentyn/theme"
 WAYBAR_DIR="$HOME/.config/waybar"
 
 mkdir -p "$(dirname "$STATE")"
-current="$(cat "$STATE" 2>/dev/null || echo blu)"
+current="$(cat "$STATE" 2>/dev/null || echo "${THEMES[0]}")"
 
 if [ $# -gt 0 ]; then
     wanted="$1"
 else
-    case "$current" in
-        blu) wanted="mono" ;;
-        *)   wanted="blu"  ;;
-    esac
+    # Posizione del tema corrente, poi il successivo tornando in testa.
+    wanted="${THEMES[0]}"
+    for i in "${!THEMES[@]}"; do
+        if [ "${THEMES[i]}" = "$current" ]; then
+            wanted="${THEMES[(i + 1) % ${#THEMES[@]}]}"
+            break
+        fi
+    done
 fi
 
 valid=0

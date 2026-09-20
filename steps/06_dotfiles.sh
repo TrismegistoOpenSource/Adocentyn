@@ -52,7 +52,10 @@ fi
 
 # Tutto ciò che è di Adocentyn sta qui sotto, niente sparso per ~/.config.
 ADOCENTYN_CONF="$USER_HOME/.config/adocentyn"
-as_user mkdir -p "$ADOCENTYN_CONF/wallpaper/blu" "$ADOCENTYN_CONF/wallpaper/mono"
+as_user mkdir -p \
+    "$ADOCENTYN_CONF/wallpaper/blu" \
+    "$ADOCENTYN_CONF/wallpaper/mono" \
+    "$ADOCENTYN_CONF/wallpaper/white"
 if [ ! -f "$ADOCENTYN_CONF/theme" ]; then
     as_user tee "$ADOCENTYN_CONF/theme" >/dev/null <<<"blu"
     ok "tema iniziale: blu"

@@ -1,0 +1,6 @@
+/* tema chiaro */
+@define-color bg      rgba(246, 246, 246, 0.94);
+@define-color bg-alt  rgba(226, 226, 226, 0.94);
+@define-color fg      #1c1c1c;
+@define-color fg-dim  #6b6b6b;
+@define-color accent  #1c1c1c;

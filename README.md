@@ -121,8 +121,7 @@ userprefs.lua     tastiera (layout it) e touchpad
 decoration.lua    bordi, spaziature, sfocatura, animazioni
 keybindings.lua   scorciatoie
 windowrules.lua   regole delle finestre
-themes/blu.lua    colori del tema blu
-themes/mono.lua   colori del tema bianco e nero
+themes/*.lua      colori dei bordi, uno per tema
 ```
 
 Lo step 03 si ferma se la build installata non espone `hl.meta.lua`: meglio un
@@ -130,7 +129,16 @@ errore chiaro dell'installer che uno schermo nero al riavvio.
 
 ## Temi e sfondi
 
-Due temi: **blu** (blu vivo) e **mono** (bianco e nero).
+Tre temi:
+
+| Tema | Aspetto |
+|---|---|
+| `blu` | blu vivo su fondo scuro |
+| `mono` | bianco e nero su fondo scuro |
+| `white` | chiaro, testo scuro su fondo bianco |
+
+`SUPER+SHIFT+T` passa al successivo, in tondo. Per andare diretto a uno:
+`adocentyn-theme white`.
 
 Tutto ciò che appartiene ad Adocentyn sta in **una cartella sola**, senza
 spargere niente in giro per `~/.config`:
@@ -140,7 +148,8 @@ spargere niente in giro per `~/.config`:
 ├── theme                 nome del tema attivo, una riga
 └── wallpaper/
     ├── blu/              sfondi del tema blu
-    └── mono/             sfondi del tema bianco e nero
+    ├── mono/             sfondi del tema bianco e nero
+    └── white/            sfondi del tema chiaro
 ```
 
 Le uniche eccezioni sono i file che devono stare dove il programma li cerca:
